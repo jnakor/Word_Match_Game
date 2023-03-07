@@ -17,11 +17,11 @@ RiskerWindow::RiskerWindow(QWidget *parent)
 
 	QObject::connect(ui.start_button, SIGNAL(clicked()), this, SLOT(Start_click_pro()));
 
-	//QObject::connect(ui.online_button, SIGNAL(clicked()), this, SLOT(Online_open_pro()));
+	QObject::connect(ui.online_button, SIGNAL(clicked()), this, SLOT(Online_open_pro()));
 
 	QObject::connect(ui.continue_button, SIGNAL(clicked()), this, SLOT(Continue_click_pro()));
 
-	//QObject::connect(ui.challege_button, SIGNAL(clicked()), this, SLOT(click_challege_pro()));
+	QObject::connect(ui.challege_button, SIGNAL(clicked()), this, SLOT(click_challege_pro()));
 
 	QObject::connect(ui.acc_button, SIGNAL(clicked()), this, SLOT(Click_acc_pro()));
 
@@ -45,9 +45,25 @@ RiskerWindow::RiskerWindow(QWidget *parent)
 
 	QObject::connect(this, SIGNAL(game_fail_sig()), this, SLOT(game_fail_pro()));
 
+	QObject::connect(timer_before_start, SIGNAL(timeout()), this, SLOT(before_start_pro()));
 
+	QObject::connect(this, SIGNAL(start_pk_sig()), this, SLOT(start_pk_pro()));
 
-	//QObject::connect(ui.refresh_button, SIGNAL(clicked()), this, SLOT(Click_refresh_pro()));
+	QObject::connect(timer_pk_example, SIGNAL(timeout()), this, SLOT(pk_example_one_pro()));
+
+	QObject::connect(this, SIGNAL(pk_example_over_sig()), this, SLOT(start_pkinput_pro()));
+
+	QObject::connect(timer_pkinput, SIGNAL(timeout()), this, SLOT(pkinput_one_pro()));
+
+	QObject::connect(this, SIGNAL(pk_round_pass_sig()), this, SLOT(pk_round_pass_pro()));
+
+	QObject::connect(this, SIGNAL(pk_round_fail_sig()), this, SLOT(pk_round_fail_pro()));
+
+	QObject::connect(this, SIGNAL(pk_all_over_sig()), this, SLOT(pk_all_over_pro()));
+
+	QObject::connect(ui.back_button, SIGNAL(clicked()), this, SLOT(Click_back_pro()));
+
+	QObject::connect(ui.refresh_button, SIGNAL(clicked()), this, SLOT(Click_refresh_pro()));
 	switch_to_info();
 
 }
@@ -314,20 +330,243 @@ void RiskerWindow::Search_open_pro() {
 	SW->show();
 }
 
+void RiskerWindow::Online_open_pro() {
+	Online_Window *OW = new Online_Window();
+	OW->setAttribute(Qt::WA_DeleteOnClose, true);
+	OW->get_sock(user->get_sockout());
+	OW->show();
+}
 
 void RiskerWindow::change_id_pro() {
 
+}
+
+void RiskerWindow::get_sock(Connetion *__sk) {
+	user->get_sock(__sk);
 }
 
 std::string RiskerWindow::get_name() {
 	return user->get_name();
 }
 
+void RiskerWindow::click_challege_pro() {
+	Connetion *sk = user->get_sockout();
+	std::string challeged_name = ui.challege_name->text().toStdString();
+	challeger_name = challeged_name;
+	if (challeger_name == user->get_name()) {
+		QMessageBox::warning(NULL, QStringLiteral("通知"), QStringLiteral("不能挑战自己哦"), QMessageBox::Yes, QMessageBox::Yes);
+	}
+	else sk->send_challege(challeged_name);
+}
 
+void RiskerWindow::get_pk_word(int len) {
+	wordpool.clear();
+	window_add_word(len);
+}
+void RiskerWindow::start_pk_pro() {
+	ui.timeleft->setMaximum(30);
+	ui.timeleft->setValue(ui.timeleft->maximum());
+	ui.input_tip->hide();
+	srand(pk_round_now);
+	example_word = wordpool[rand() % wordpool.size()];
+	ui.input->clearFocus();
+	ui.input->setText(QString::fromStdString(example_word));
+	ui.input->setFocusPolicy(Qt::NoFocus);//不允许获得焦点
+	timer_pk_example->start(speed());
+}
 
+void RiskerWindow::pk_example_one_pro() {
+	ui.timeleft->setValue(ui.timeleft->value() - 1);
+	if (ui.timeleft->value() == 0) {
+		timer_pk_example->stop();
+		ui.input->setText("");
+		//emit pk_example_over_sig();
+		start_pkinput_pro();
+	}
+	else timer_pk_example->start(speed());
+}
 
+void RiskerWindow::start_pkinput_pro() {
+	ui.timeleft->setMaximum(30 - gk.ck_now * 5);
+	ui.timeleft->setValue(ui.timeleft->maximum());
+	ui.input_tip->show();
+	timer_pkinput->start(pk_input_gap);
+	ui.input->setFocus();
+}
 
+void RiskerWindow::pkinput_one_pro() {
+	ui.timeleft->setValue(ui.timeleft->value() - 1);
+	if (ui.timeleft->value() == 0) {
+		timer_pkinput->stop();
+		emit pk_round_fail_sig();
+	}
+	else if (ui.input->text().toStdString() == example_word) {
+		timer_pkinput->stop();
+		emit pk_round_pass_sig();
+	}
+	else timer_pkinput->start(pk_input_gap);
+}
 
+void RiskerWindow::pk_round_over_pro() {
+	//user->get_sockout()->send;
+}
 
+void RiskerWindow::Click_acc_pro() {
+	Connetion *sk;
+	sk = user->get_sockout();
+	sk->send_accept(ui.challeger_name->text().toStdString());
+	score = 0;
+	pk_round_now = 0;
+	get_pk_word(5);
+	before_start_pro();
+}
 
+void RiskerWindow::he_accept_you() {
+	ui.reply_label->setText(QStringLiteral("对方接受咯,3 s 后开始pk"));
+	//timer_before_start->start(300);
+	ui.reply_label->show();
+	score = 0;
+	pk_round_now = 0;
+	get_pk_word(5);
+	before_start_pro();
+}
+void RiskerWindow::he_refuse_you() {
+	ui.reply_label->setText(QStringLiteral("对方不想和你玩"));
+	ui.reply_label->show();
+}
+void RiskerWindow::he_challege_you(std::string his_name) {
+	ui.refresh_button->hide();
+	challeger_name = his_name;
+	ui.challeger_name->setText(QString::fromStdString(challeger_name));
+	ui.acc_button->show();
+	ui.refuse_button->show();
+	ui.challeger_name->show();
+	ui.be_challeged_label->show();
+}
 
+void RiskerWindow::he_is_busy() {
+	ui.reply_label->setText(QStringLiteral("对方忙"));
+	ui.reply_label->show();
+}
+
+void RiskerWindow::Click_refuse_pro() {
+	Connetion *sk;
+	sk = user->get_sockout();
+	sk->send_refuse(challeger_name);
+	switch_to_info();
+}
+
+void RiskerWindow::before_start_pro() {
+	ui.refresh_button->hide();
+	ui.name_label->hide();
+	ui.name->hide();
+	ui.checkpoints_label->hide();
+	ui.checkpoints->hide();
+	ui.exp_label->hide();
+	ui.exp_bar->hide();
+	ui.level_label->hide();
+	ui.level->hide();
+	ui.search_button->hide();
+	ui.input_tip->hide();
+	ui.continue_button->hide();
+	ui.start_button->hide();
+	ui.exp_display->hide();
+	ui.need_display->hide();
+	ui.online_button->hide();
+	ui.current_checkpoint_label->hide();
+	ui.current_checkpoint->hide();
+	ui.challege_button->hide();
+	ui.acc_button->hide();
+	ui.refuse_button->hide();
+	ui.challeger_name->hide();
+	ui.challege_name->hide();
+	ui.reply_label->hide();
+	ui.be_challeged_label->hide();
+	ui.timeleft->show();
+	ui.input->show();
+	emit start_pk_sig();
+}
+
+void RiskerWindow::pk_round_pass_pro() {
+	pk_round_now++;
+	score += ui.timeleft->value();
+	//score += 1;
+	if (pk_round_now == pk_rounds_all) {
+		Connetion *sk = user->get_sockout();
+		sk->send_end(challeger_name, score);
+		emit pk_all_over_sig();
+	}
+	else {
+		emit start_pk_sig();
+	}
+}
+void RiskerWindow::pk_round_fail_pro() {
+	pk_round_now++;
+	score += 0;
+	if (pk_round_now == pk_rounds_all) {
+		emit pk_all_over_sig();
+	}
+	else {
+		emit start_pk_sig();
+	}
+}
+
+void RiskerWindow::pk_all_over_pro() {
+	switch_to_result();
+	Connetion *sk = user->get_sockout();
+	sk->send_end(challeger_name, score);
+}
+void RiskerWindow::show_he_result(int he_score) {
+	ui.he_time->setText(QString::fromStdString(std::to_string(score)));
+	ui.he_time->setText(QString::fromStdString(std::to_string(he_score)));
+	if (he_score < score) {
+		ui.result_label->setText(QStringLiteral("赛果：胜利啦"));
+	}
+	else if (he_score > score) {
+		ui.result_label->setText(QStringLiteral("赛果：你输了哦"));
+	}
+	else {
+		ui.result_label->setText(QStringLiteral("赛果：平局"));
+	}
+}
+
+void RiskerWindow::switch_to_result() {
+	ui.timeleft->hide();
+	ui.input_tip->hide();
+	ui.input->hide();
+	ui.your_time->setText(QString::fromStdString(std::to_string(score)));
+	if (result_flag == 0) {
+		ui.result_label->setText(QStringLiteral("赛果：等待中"));
+		ui.he_time->setText(QStringLiteral("等待中"));
+	}
+	else {
+		;
+	}
+	ui.back_button->show();
+	ui.result_label->show();
+	ui.he_time_label->show();
+	ui.he_time->show();
+	ui.your_time_label->show();
+	ui.your_time->show();
+	ui.he_time->show();
+}
+
+void RiskerWindow::Click_back_pro() {
+	result_flag = 0;
+	Connetion *sk = user->get_sockout();
+	sk->send_free();
+	switch_to_info();
+}
+
+void RiskerWindow::set_result_flag() {
+	result_flag = 1;
+}
+
+void RiskerWindow::he_offline() {
+	ui.reply_label->setText(QStringLiteral("对方不在线啊"));
+	ui.reply_label->show();
+}
+
+void RiskerWindow::Click_refresh_pro() {
+	switch_to_info();
+}

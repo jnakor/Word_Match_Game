@@ -33,6 +33,12 @@
     <QtMoc Include="QtGuiApplication1.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="MyThread.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Online_Window.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
     <QtMoc Include="RiskerInfoW.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -71,6 +77,9 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Connetion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Risker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -78,6 +87,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MD_FIVE.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Online_Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RiskerInfoW.cpp">
@@ -115,6 +130,9 @@
     <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Connetion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Risker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -126,6 +144,9 @@
     </ClInclude>
     <ClInclude Include="guanka.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\final\QtGuiApplication1\QtGuiApplication1\ui_Online_Window.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\final\QtGuiApplication1\QtGuiApplication1\ui_QtGuiApplication1.h">
       <Filter>Resource Files</Filter>

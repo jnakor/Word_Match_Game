@@ -14,6 +14,7 @@ public:
 	TestmakerWindow(QWidget *parent = Q_NULLPTR);
 	~TestmakerWindow();
 	bool user_login(std::string user_name);
+	void get_sock(Connetion *__sk);
 	std::string get_name();
 private:
 	Ui::TestmakerWindow ui;

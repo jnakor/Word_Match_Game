@@ -13,6 +13,7 @@
 #include "Risker.h"
 #include "TestmakerWindow.h"
 #include "RiskerWindow.h"
+#include "Connetion.h"
 
 class QtGuiApplication1 : public QMainWindow
 {
@@ -31,5 +32,5 @@ private:
 private slots:
 	void ClickLogin();
 	void ClickRegister();
-	//void ForceLogin();
+	void ForceLogin();
 };

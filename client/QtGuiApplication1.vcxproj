@@ -14,11 +14,14 @@
     <QtMoc Include="QtGuiApplication1.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Connetion.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="guanka.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="md5.cpp" />
     <ClCompile Include="MD_FIVE.cpp" />
+    <ClCompile Include="MyThread.cpp" />
+    <ClCompile Include="Online_Window.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="QtGuiApplication1.cpp">
       <OutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\%(Filename).moc</OutputFile>
@@ -42,6 +45,7 @@
     <ClCompile Include="TestmakerWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\final\QtGuiApplication1\QtGuiApplication1\ui_Online_Window.h" />
     <ClInclude Include="..\..\..\final\QtGuiApplication1\QtGuiApplication1\ui_QtGuiApplication1.h" />
     <ClInclude Include="..\..\..\final\QtGuiApplication1\QtGuiApplication1\ui_RankWindow.h" />
     <ClInclude Include="..\..\..\final\QtGuiApplication1\QtGuiApplication1\ui_RegisterWindow.h" />
@@ -50,6 +54,7 @@
     <ClInclude Include="..\..\..\final\QtGuiApplication1\QtGuiApplication1\ui_SearchWindow.h" />
     <ClInclude Include="..\..\..\final\QtGuiApplication1\QtGuiApplication1\ui_TestmakerInfoW.h" />
     <ClInclude Include="..\..\..\final\QtGuiApplication1\QtGuiApplication1\ui_TestmakerWindow.h" />
+    <ClInclude Include="Connetion.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="guanka.h" />
     <ClInclude Include="md5.h" />
@@ -61,6 +66,8 @@
     <QtMoc Include="SearchWindow.h" />
     <QtMoc Include="RiskerWindow.h" />
     <QtMoc Include="RiskerInfoW.h" />
+    <QtMoc Include="Online_Window.h" />
+    <QtMoc Include="MyThread.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Risker.h" />
     <ClInclude Include="Testmaker.h" />

@@ -69,6 +69,10 @@ void TestmakerWindow::Search_open() {
 	SW->show();
 }
 
+void TestmakerWindow::get_sock(Connetion *__sk) {
+	user->get_sock(__sk);
+}
+
 std::string TestmakerWindow::get_name() {
 	return user->get_name();
 }

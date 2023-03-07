@@ -5,11 +5,13 @@ Player::Player() :game_database(new Database) {
 	player_table = game_database->table_player;
 	Testmaker_table = game_database->table_test_maker;
 	Risker_table = game_database->table_risker;
+	sk = NULL;
 }
 
 Player::~Player() {
 	delete game_database;
 	delete info;
+	if (sk != NULL)delete sk;
 }
 //name_api
 
@@ -122,4 +124,12 @@ bool check_passwd(const string user_name, string pass_word) {
 		MD_FIVE hasher;
 		return hasher.MD5_HASH(pass_word) == row[1];
 	}
+}
+
+void Player::get_sock(Connetion *__sk) {//父亲不允许调用，只允许孩子调用
+	this->sk = __sk;
+}
+
+Connetion *Player::get_sockout() {
+	return sk;
 }

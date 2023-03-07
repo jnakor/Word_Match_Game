@@ -2,7 +2,7 @@
 #include<string>
 #include<iostream>
 #include "Database.h"
-//#include "Connetion.h"
+#include "Connetion.h"
 #include "MD_FIVE.h"
 
 using std::string;
@@ -31,6 +31,7 @@ protected:
 	struct player_info * info;
 	bool register_name(std::string temp_name, int type, std::string pass_word);
 	bool update_name(std::string temp_name, std::string new_name);
+	Connetion *sk;
 public:
 	static const int type_risker = 0;
 	static const int type_testmaker = 1;
@@ -43,7 +44,10 @@ public:
 	int get_level();
 	int get_type();
 	player_info get_player_info();
+	Connetion *get_sockout();
 	friend bool exist(std::string  user_name);
 	friend player_info getplayerinfobyname(std::string  user_name);
 	friend bool check_passwd(const string user_name, string pass_word);
+
+	void get_sock(Connetion *__sk);
 };
